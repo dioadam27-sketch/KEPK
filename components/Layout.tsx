@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { LayoutDashboard, FileText, CheckCircle, ShieldCheck, UserCircle, LogOut, Users, Settings, FolderCog, FileStack } from 'lucide-react';
-import { UserRole } from '../types';
+import { UserRole, UserProfile } from '../types';
 
 interface LayoutProps {
   children: React.ReactNode;
   currentRole: UserRole;
+  currentUser: UserProfile | null; // Add currentUser prop
   onLogout: () => void;
   activeView: string;
   setActiveView: (view: string) => void;
@@ -14,6 +15,7 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ 
   children, 
   currentRole, 
+  currentUser,
   onLogout,
   activeView,
   setActiveView 
@@ -83,9 +85,11 @@ export const Layout: React.FC<LayoutProps> = ({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">
-                {currentRole === 'researcher' ? 'Dr. Budi Santoso' : currentRole === 'reviewer' ? 'Prof. Reviewer' : 'Super Admin'}
+                {currentUser ? currentUser.name : 'Pengguna'}
               </p>
-              <p className="text-xs text-white/60 capitalize">{currentRole}</p>
+              <p className="text-xs text-white/60 capitalize">
+                {currentUser?.role === 'researcher' ? 'Researcher' : currentUser?.role === 'reviewer' ? 'Reviewer' : 'Admin'}
+              </p>
             </div>
           </div>
           <button 

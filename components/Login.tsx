@@ -4,7 +4,8 @@ import { UserRole } from '../types';
 import { ShieldCheck, User, ArrowRight, Lock, Mail, AlertCircle, Settings, ChevronLeft, Users, AlertTriangle, Home } from 'lucide-react';
 
 interface LoginProps {
-  onLogin: (email: string, password: string, roleType: 'user' | 'admin', selectedRole?: UserRole) => Promise<boolean>;
+  // Updated return type to include message
+  onLogin: (email: string, password: string, roleType: 'user' | 'admin', selectedRole?: UserRole) => Promise<{ success: boolean; message?: string }>;
   onRegisterClick: () => void;
   onBackToHome?: () => void;
 }
@@ -33,10 +34,14 @@ export const Login: React.FC<LoginProps> = ({ onLogin, onRegisterClick, onBackTo
     setIsLoading(true);
     
     try {
-      // Panggil fungsi onLogin yang diteruskan dari App.tsx (yang akan memanggil API)
-      const success = await onLogin(userEmail, userPassword, 'user', activeUserRole);
-      if (!success) {
-        setError({ section: 'user', msg: 'Email atau Password salah, atau akun belum aktif.' });
+      // Panggil fungsi onLogin yang diteruskan dari App.tsx
+      const result = await onLogin(userEmail, userPassword, 'user', activeUserRole);
+      
+      if (!result.success) {
+        setError({ 
+          section: 'user', 
+          msg: result.message || 'Email atau Password salah, atau akun belum aktif.' 
+        });
       }
     } catch (err) {
       setError({ section: 'user', msg: 'Terjadi kesalahan jaringan.' });
@@ -51,9 +56,13 @@ export const Login: React.FC<LoginProps> = ({ onLogin, onRegisterClick, onBackTo
     setIsLoading(true);
 
     try {
-      const success = await onLogin(adminEmail, adminPassword, 'admin');
-      if (!success) {
-        setError({ section: 'admin', msg: 'Kredensial Admin tidak valid.' });
+      const result = await onLogin(adminEmail, adminPassword, 'admin');
+      
+      if (!result.success) {
+        setError({ 
+          section: 'admin', 
+          msg: result.message || 'Kredensial Admin tidak valid.' 
+        });
       }
     } catch (err) {
       setError({ section: 'admin', msg: 'Terjadi kesalahan jaringan.' });

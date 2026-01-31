@@ -1,7 +1,11 @@
 
 import { ResearchSubmission, UserProfile, DocumentRequirement, UserRole } from '../types';
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbzlRqzoy_mVHQ3J5VJTUukg_uPH2Cy99m9AuO5Pxa2zRaFreTNm42Bgq-2-PJ5zZ8_P7A/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbznGbzCIIyHTrBSMkjKlE7biJBsrsCfKL85k3ZfklP-BW1reCtCxlaZDqPdPDSLEv0N9g/exec';
+
+// Folder ID Google Drive tujuan penyimpanan dokumen
+// Link: https://drive.google.com/drive/folders/1GU-eTqxSextOVcieCDlzgkQpUj65RpTA?usp=sharing
+const DRIVE_FOLDER_ID = '1GU-eTqxSextOVcieCDlzgkQpUj65RpTA';
 
 // Helper untuk POST request (menggunakan text/plain untuk menghindari CORS Preflight pada GAS)
 const postData = async (action: string, payload: any) => {
@@ -57,13 +61,22 @@ export const apiService = {
     return await postData('updateUserStatus', { id, status });
   },
 
+  deleteUser: async (id: string) => {
+    return await postData('deleteUser', { id });
+  },
+
   // --- SUBMISSIONS ---
   getSubmissions: async (role: UserRole, email: string) => {
     return await getData('getSubmissions', { role, email });
   },
 
   createSubmission: async (submission: any) => {
-    return await postData('createSubmission', submission);
+    // Inject folder ID agar backend (Google Apps Script) tahu di mana harus menyimpan file
+    const payload = {
+      ...submission,
+      driveFolderId: DRIVE_FOLDER_ID
+    };
+    return await postData('createSubmission', payload);
   },
 
   updateSubmissionStatus: async (id: string, status: string, feedback?: string, approvalDate?: string) => {

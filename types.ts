@@ -9,7 +9,8 @@ export type SubmissionStatus =
   | 'approved' 
   | 'monitoring';
 
-export type UserStatus = 'active' | 'pending' | 'rejected';
+// Menambahkan status 'suspended' untuk fitur nonaktifkan user
+export type UserStatus = 'active' | 'pending' | 'rejected' | 'suspended';
 
 export interface UserProfile {
   id: string;
@@ -37,6 +38,11 @@ export interface DocumentFile {
   // Type diubah menjadi string agar dinamis sesuai pengaturan admin
   type: string; 
   uploadedAt: string;
+  // Fields for File Upload (Base64)
+  content?: string; 
+  mimeType?: string;
+  // Field for Google Drive Link
+  url?: string;
 }
 
 export interface SelfAssessmentItem {
